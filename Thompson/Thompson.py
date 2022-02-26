@@ -48,21 +48,23 @@ class Thompson(object):
         #This fucntion return an NFA based on the regular
         #expression provided 
         nodes = self.__get_inital_nodes()
-        while(len(nodes)!=1 or nodes[0].value == self.regex):
+        while(len(nodes)!=1 and nodes[0].value != self.regex):
             new_nodes = []
             index = 0
             while(index<len(nodes)):
-                print(self.regex[node.index_start: node.index_end + 1], node.value + "*")
                 node = nodes[index]
+                print(self.regex[node.index_start - 1: node.index_end + 2], "asdf")
                 if(self.regex[node.index_start - 1: node.index_end + 1] == ("(" + node.value + ")")):
                     #If the parent node is a parenthesis, in other words if the value of the current node its
                     #enclosed by parenthesis.
+                    print('ser')
                     new_nodes.append(Node(
                         self.regex[node.index_start - 1: node.index_end + 1],
                         node.nfa,
                         node.index_start - 1,
                         node.index_end + 1
                     ))
+                    index += 1
                 elif(self.regex[node.index_start: node.index_end + 1] == node.value + "*"):
                     new_nodes.append(Node(
                         self.regex[node.index_start: node.index_end + 1],
@@ -70,6 +72,7 @@ class Thompson(object):
                         node.index_start,
                         node.index_end + 1
                     ))
+                    index += 1
                 elif(
                     index+1<len(nodes) and
                     self.regex[node.index_start: nodes[index+1].index_end + 1] == node.value + nodes[index+1].value
@@ -80,20 +83,28 @@ class Thompson(object):
                         node.index_start,
                         nodes[index+1].index_end
                     ))
+                    index += 2
                 elif(
                     index+1<len(nodes) and
                     self.regex[node.index_start: nodes[index+1].index_end + 2] == node.value + '|' + nodes[index+1].value
                 ):
-                     new_nodes.append(Node(
+                    new_nodes.append(Node(
                         self.regex[node.index_start: nodes[index+1].index_end + 1],
                         self.__OR(node.nfa, nodes[index+1].nfa),
                         node.index_start,
                         nodes[index+1].index_end
-                    ))
+                    )) 
+                    index += 2
                 else:
                     new_nodes.append(node)
-                index += 1
-                nodes = new_nodes
+                    index += 1
+            for node in nodes:
+                print (node.value)
+            print('------------------')
+            nodes = new_nodes
+        for node in nodes:
+            print (node.value)
+        print('------------------')
         return nodes[0].nfa            
             
     def __OR(self, a, b):
