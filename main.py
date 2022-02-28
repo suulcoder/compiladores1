@@ -43,3 +43,4 @@ if __name__ == "__main__":
         for state in transition[2]:
             print(state.id)
     
+    

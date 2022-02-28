@@ -2,7 +2,7 @@ class Transitions(object):
     """Transitions
 
     Args:
-        Transitions (List<<State>, <char>, List<State>): 
+        Transitions List<(<State>, <char>, List<State>)>: 
         This must be a list with the state as first and the 
         char as second, and the final state as third.
     """
