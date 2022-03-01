@@ -13,6 +13,8 @@ from Thompson.Thompson import Thompson
 from NFA.NFA import NFA
 import sys, getopt
 
+from SubsetConstructionAlgorythm.SubsetConstructionAlgorythm import SubsetConstructionAlgorythm
+
 def generate_NFA(regex):
     return Thompson(regex).generate_NFA()
 
@@ -42,5 +44,14 @@ if __name__ == "__main__":
         print(transition[0].id, transition[1])
         for state in transition[2]:
             print(state.id)
+    subsetConstructionAlgorythm = SubsetConstructionAlgorythm(nfa)
+    dfa = subsetConstructionAlgorythm.getDFA()
     
+    print("-----------------------------------------")
+    for transition in dfa.transitions.transitions:
+        print(transition[0].id, transition[1])
+        for state in transition[2]:
+            print(state.id)
+    for state in dfa.finals:
+        print(state)
     

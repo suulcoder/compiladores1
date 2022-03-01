@@ -3,7 +3,7 @@ from State.State import State
 from Transitions.Transitions import Transitions
 
 class DFA(object):
-    """NFA:A Nondeterministic finite automaton
+    """DFA:A Deterministic finite automaton
 
     Args:
         states (_list<int>_): 
@@ -12,7 +12,7 @@ class DFA(object):
         initial (<State>): This must be the initial state, and should be included
             in the states list
         
-        finals (<Statee>): This must be the final states, and should be included
+        finals (<State>): This must be the final states, and should be included
             in the states list
             
         alphabet (_list<char>_): 

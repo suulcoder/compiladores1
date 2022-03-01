@@ -6,9 +6,9 @@ class Transitions(object):
         This must be a list with the state as first and the 
         char as second, and the final state as third.
     """
-    def __init__(self, transitions):
+    def __init__(self, transitions=None):
         super(Transitions, self).__init__()
-        self.transitions = [transitions]
+        self.transitions = [transitions] if transitions is not None else []
         
     def get(self, state, character):
         for transition in self.transitions:
