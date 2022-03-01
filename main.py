@@ -40,18 +40,24 @@ def main(argv):
 if __name__ == "__main__":
     regex, string = main(sys.argv[1:])  #Read regex and string
     nfa = generate_NFA(regex)
+    
+    print("----------------NFA-------------------")
     for transition in nfa.transitions.transitions:
         print(transition[0].id, transition[1])
         for state in transition[2]:
             print(state.id)
+
     subsetConstructionAlgorythm = SubsetConstructionAlgorythm(nfa)
     dfa = subsetConstructionAlgorythm.getDFA()
     
-    print("-----------------------------------------")
+    print("----------------DFA-------------------")
     for transition in dfa.transitions.transitions:
         print(transition[0].id, transition[1])
         for state in transition[2]:
             print(state.id)
-    for state in dfa.finals:
-        print(state)
     
+    print("-------------Simulating...--------------")
+    if(dfa.simulate(string)):
+        print("Pertenece al lenguje")
+    else:
+        print("ni madres")

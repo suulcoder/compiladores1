@@ -11,8 +11,8 @@ class SubsetConstructionAlgorythm(object):
     def verify_state(self, state):
         for _state in self.states:
             if _state.clousure == state.clousure:
-                return False
-        return True
+                return (False, _state)
+        return (True, None)
     
     def getFinals(self):
         finals = []
@@ -37,15 +37,26 @@ class SubsetConstructionAlgorythm(object):
         while(self.isDone()):
             for _state in self.states:
                 if(not _state.marked):
+                    #print("-------------------")
+                    #print(_state.id)
                     _state.mark()
                     for char in self.nfa.alphabet + ['ε']:
+                        #print(char)
                         nfa_transitions = self.nfa.transitions
                         for __state in _state.clousure:
-                            if(nfa_transitions.get(__state, char)!=None):
-                                _newState = State(nfa_transitions.get(__state, char))
-                                if(self.verify_state(_newState)):
-                                    transitions.add_transition(_state, char, _newState)
+                            #print(__state.id, self.nfa.initial.id)
+                            newStateTransitions = nfa_transitions.get(__state, char)
+                            if(isinstance(newStateTransitions, list)):
+                                _newState = State(newStateTransitions)
+                                verify, ___state = self.verify_state(_newState)
+                                if(verify):
+                                    #for mystate in newStateTransitions:
+                                        #print(mystate.id)
+                                    #print("lo agregue")
                                     self.states.append(_newState)
+                                    transitions.add_transition(_state, char, _newState)
+                                else:
+                                    transitions.add_transition(_state, char, ___state)
         finals = self.getFinals()
         return DFA(
             self.states,
