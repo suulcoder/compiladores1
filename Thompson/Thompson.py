@@ -24,7 +24,7 @@ class Thompson(object):
         nodes = []
         for index in range(0,len(self.regex)):
             char = self.regex[index]
-            if(char!='*' and char!='(' and char!=')' and char!='|'):
+            if(char!='*' and char!='(' and char!=')' and char!='|' and char!='?' and char!='+'):
                 initial = State()
                 final = State()
                 nodes.append(
@@ -68,6 +68,24 @@ class Thompson(object):
                     index += 1
             nodes = new_nodes
                     
+            #Positive clousure is a Kleene Clousure with a concatenation a+ = a*a
+            new_nodes = []
+            index = 0
+            while(index<len(nodes)):
+                node = nodes[index]
+                if(self.regex[node.index_start: node.index_end + 1] == node.value + "+"):
+                    new_nodes.append(Node(
+                        self.regex[node.index_start: node.index_end + 1],
+                        self.__Concatenate(self.__Kleene(node.nfa), node.nfa),
+                        node.index_start,
+                        node.index_end + 1
+                    ))
+                    index += 1
+                else:
+                    new_nodes.append(node)
+                    index += 1
+            nodes = new_nodes      
+            
             #Kleene is second on hierarchy
             #If the value of the current node its previous to a Kleene sign.
             new_nodes = []
@@ -104,6 +122,35 @@ class Thompson(object):
                         nodes[index+1].index_end
                     ))
                     index += 2
+                else:
+                    new_nodes.append(node)
+                    index += 1
+            nodes = new_nodes
+            
+            #Symbol ?
+            new_nodes = []
+            index = 0
+            while(index<len(nodes)):
+                node = nodes[index]
+                if(self.regex[node.index_start: node.index_end + 1] == node.value + "?"):
+                    empty_initial = State()
+                    final_initial = State()
+                    new_nodes.append(Node(
+                        self.regex[node.index_start: node.index_end + 1],
+                        self.__OR(
+                            node.nfa,
+                            NFA(
+                                [empty_initial, final_initial],
+                                empty_initial,
+                                [final_initial],
+                                ['ε'],
+                                Transitions([empty_initial, 'ε', [final_initial]])
+                            ),
+                        ),
+                        node.index_start,
+                        node.index_end + 1
+                    ))
+                    index += 1
                 else:
                     new_nodes.append(node)
                     index += 1

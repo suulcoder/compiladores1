@@ -50,13 +50,19 @@ if __name__ == "__main__":
     subsetConstructionAlgorythm = SubsetConstructionAlgorythm(nfa)
     dfa = subsetConstructionAlgorythm.getDFA()
     
+    print("-------Simulating... with NFA-------")
+    if(nfa.simulate(string)):
+        print("Pertenece al lenguje")
+    else:
+        print("ni madres")
+    
     print("----------------DFA-------------------")
     for transition in dfa.transitions.transitions:
         print(transition[0].id, transition[1])
         for state in transition[2]:
             print(state.id)
     
-    print("-------------Simulating...--------------")
+    print("-------Simulating... with DFA-------")
     if(dfa.simulate(string)):
         print("Pertenece al lenguje")
     else:

@@ -56,13 +56,21 @@ class DFA(object):
                 newState += empty_transitions
         if(len(newState)>0):
             self.current = newState
+        else:
+            raise Exception
         if(empty_path_found):
             self.__make_trasition(character)
-        return self.__is_current_a_final()
     
     def simulate(self, string):
         for char in string:
-            if(self.__make_trasition(char)):
-                return True
-        return False
-                
+            try:
+                self.__make_trasition(char)
+            except:
+                return False
+        #Iterate three nodes with emtpy charaacter
+        for state in self.current:
+            empty_transitions = self.transitions.get(state, 'ε')
+            if(isinstance(empty_transitions, list)):
+                self.current = empty_transitions
+        return self.__is_current_a_final()   
+    
