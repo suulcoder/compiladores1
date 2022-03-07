@@ -40,37 +40,14 @@ class DFA(object):
                 return True
         return False
     
-    def __make_trasition(self, character):
-        #bool function, character must be a string memember of alphabet
-        #It checks if the new states are final states, and it return
-        #true if is like that
-        newState = []
-        empty_path_found = False
-        for state in self.current:
-            transitions = self.transitions.get(state, character)
-            if(isinstance(transitions, list)):
-                newState += transitions
-            empty_transitions = self.transitions.get(state, 'ε')
-            if(isinstance(empty_transitions, list)):
-                empty_path_found = True
-                newState += empty_transitions
-        if(len(newState)>0):
-            self.current = newState
-        else:
-            raise Exception
-        if(empty_path_found):
-            self.__make_trasition(character)
-    
     def simulate(self, string):
+        S = self.initial
         for char in string:
-            try:
-                self.__make_trasition(char)
-            except:
+            transition = self.transitions.get(S, char)
+            if(len(transition)!=0):
+                S = transition[0]
+            else:
                 return False
-        #Iterate three nodes with emtpy charaacter
-        for state in self.current:
-            empty_transitions = self.transitions.get(state, 'ε')
-            if(isinstance(empty_transitions, list)):
-                self.current = empty_transitions
-        return self.__is_current_a_final()   
-    
+        if(S in self.finals):
+            return True
+        return False

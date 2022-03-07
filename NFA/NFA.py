@@ -1,6 +1,8 @@
 #A Nondeterministic finite automaton
+from sympy import true
 from State.State import State
 from Transitions.Transitions import Transitions
+from utils.clousure import clousure
 
 class NFA(object):
     """NFA:A Nondeterministic finite automaton
@@ -39,37 +41,26 @@ class NFA(object):
                 return True
         return False
     
-    def __make_trasition(self, character):
+    def __make_trasition(self, S, character):
         #bool function, character must be a string memember of alphabet
         #It checks if the new states are final states, and it return
         #true if is like that
         newState = []
-        empty_path_found = False
-        for state in self.current:
-            transitions = self.transitions.get(state, character)
-            if(isinstance(transitions, list)):
-                newState += transitions
-            empty_transitions = self.transitions.get(state, 'ε')
-            if(isinstance(empty_transitions, list)):
-                empty_path_found = True
-                newState += empty_transitions
-        if(len(newState)>0):
-            self.current = newState
-        else:
-            raise Exception
-        if(empty_path_found):
-            self.__make_trasition(character)
+        for _state in S:
+            states = clousure(self.transitions.get(_state, character), self.transitions.transitions)
+            for __state in states:
+                if(__state not in newState):
+                    newState.append(__state)
+        return newState
     
     def simulate(self, string):
+        S = clousure([self.initial], self.transitions.transitions)
         for char in string:
-            try:
-                self.__make_trasition(char)
-            except:
-                return False
-        #Iterate three nodes with emtpy charaacter
-        for state in self.current:
-            empty_transitions = self.transitions.get(state, 'ε')
-            if(isinstance(empty_transitions, list)):
-                self.current = empty_transitions
-        return self.__is_current_a_final()   
+            S =  self.__make_trasition(S, char)
+        for state in S:
+            if(state in self.finals):
+                return True
+        return False
+                            
+            
     

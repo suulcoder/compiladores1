@@ -17,7 +17,7 @@ class Transitions(object):
             final = transition[2]
             if(initial == state and char == character):
                 return final
-        return None
+        return []
     
     def add_transition(self, initial_state, character, final_state):
         for transition in self.transitions:

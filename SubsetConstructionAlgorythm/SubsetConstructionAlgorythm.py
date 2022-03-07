@@ -1,7 +1,10 @@
+from pickle import FALSE
+from re import L
+from sympy import false
 from State.State import State
 from Transitions.Transitions import Transitions
 from DFA.DFA import DFA
-
+from utils.clousure import clousure
 class SubsetConstructionAlgorythm(object):
     def __init__(self, nfa):
         super(SubsetConstructionAlgorythm, self).__init__()
@@ -24,39 +27,41 @@ class SubsetConstructionAlgorythm(object):
         return finals
         
     def isDone(self):
-        done = True
+        for __state in self.states:
+                if(not __state.marked):
+                    __state.mark()
+                    return (True, __state) 
+        return (False, None)
+    
+    def isInStates(self, state):
         for _state in self.states:
-            if _state.marked:
-                done = False
-        return done
+            for _clousure_state in state.clousure:
+                if(_clousure_state in _state.clousure):
+                    return (True, _state)
+        return (False, None)
         
     def getDFA(self):
-        newState = State([self.nfa.initial])
+        newState = State(clousure=clousure([self.nfa.initial], self.nfa.transitions.transitions))
         self.states.append(newState)
         transitions = Transitions()
-        while(self.isDone()):
-            for _state in self.states:
-                if(not _state.marked):
-                    #print("-------------------")
-                    #print(_state.id)
-                    _state.mark()
-                    for char in self.nfa.alphabet + ['ε']:
-                        #print(char)
-                        nfa_transitions = self.nfa.transitions
-                        for __state in _state.clousure:
-                            #print(__state.id, self.nfa.initial.id)
-                            newStateTransitions = nfa_transitions.get(__state, char)
-                            if(isinstance(newStateTransitions, list)):
-                                _newState = State(newStateTransitions)
-                                verify, ___state = self.verify_state(_newState)
-                                if(verify):
-                                    #for mystate in newStateTransitions:
-                                        #print(mystate.id)
-                                    #print("lo agregue")
-                                    self.states.append(_newState)
-                                    transitions.add_transition(_state, char, _newState)
-                                else:
-                                    transitions.add_transition(_state, char, ___state)
+        done, T  = self.isDone()
+        while(done):
+            for char in self.nfa.alphabet:
+                old_transition = []
+                for clousure_state in T.clousure:
+                    state_old_transition = self.nfa.transitions.get(clousure_state, char)
+                    for state_transition in state_old_transition:
+                        if(state_transition not in old_transition):
+                            old_transition.append(state_transition)
+                if(len(old_transition)!=0):
+                    U = State(clousure=clousure(old_transition, self.nfa.transitions.transitions))
+                    UinStates = self.isInStates(U)
+                    if(not UinStates[0]):
+                        self.states.append(U)
+                    else:
+                        U = UinStates[1]
+                    transitions.add_transition(T, char, U)
+            done, T  = self.isDone()
         finals = self.getFinals()
         return DFA(
             self.states,

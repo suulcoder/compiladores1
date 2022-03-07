@@ -1,3 +1,4 @@
+from turtle import done
 from NFA.NFA import NFA
 from State.State import State
 from Node.Node import Node
@@ -127,26 +128,24 @@ class Thompson(object):
                     index += 1
             nodes = new_nodes
             
-            #Symbol ?
+            #Nullable ?
+            #If the value has nullable following value|ε
             new_nodes = []
             index = 0
             while(index<len(nodes)):
                 node = nodes[index]
                 if(self.regex[node.index_start: node.index_end + 1] == node.value + "?"):
-                    empty_initial = State()
-                    final_initial = State()
+                    initial = State()
+                    final = State()
                     new_nodes.append(Node(
                         self.regex[node.index_start: node.index_end + 1],
-                        self.__OR(
-                            node.nfa,
-                            NFA(
-                                [empty_initial, final_initial],
-                                empty_initial,
-                                [final_initial],
-                                ['ε'],
-                                Transitions([empty_initial, 'ε', [final_initial]])
-                            ),
-                        ),
+                        self.__OR(node.nfa, NFA(
+                            [initial, final],
+                            initial,
+                            [final],
+                            ['ε'],
+                            Transitions([initial, 'ε', [final]])
+                        )),
                         node.index_start,
                         node.index_end + 1
                     ))
