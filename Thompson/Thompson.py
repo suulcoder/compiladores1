@@ -77,7 +77,7 @@ class Thompson(object):
                 if(self.regex[node.index_start: node.index_end + 1] == node.value + "+"):
                     new_nodes.append(Node(
                         self.regex[node.index_start: node.index_end + 1],
-                        self.__Concatenate(self.__Kleene(node.nfa), node.nfa),
+                        self.__Concatenate(node.nfa, self.__Kleene(node.nfa)),
                         node.index_start,
                         node.index_end + 1
                     ))

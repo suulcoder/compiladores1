@@ -11,6 +11,6 @@ def clousure(state, transitions):
                 for _state in u:
                     if(_state not in e_clousure):
                         e_clousure.append(_state)
-                stack.append(u)
+                    stack.append(_state)
     return e_clousure
     

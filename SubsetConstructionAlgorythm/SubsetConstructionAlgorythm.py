@@ -63,6 +63,8 @@ class SubsetConstructionAlgorythm(object):
                     transitions.add_transition(T, char, U)
             done, T  = self.isDone()
         finals = self.getFinals()
+        if(len(finals)==0):
+            finals = [newState]
         return DFA(
             self.states,
             newState,

@@ -25,7 +25,12 @@ class Transitions(object):
             char = transition[1]
             final = transition[2]
             if(initial == initial_state and char == character):
-                final += [final_state]
+                add = True
+                for _final_state in final:
+                    if(final_state==_final_state):
+                        add = False
+                if(add):
+                    final += [final_state]
                 return
         self.transitions.append([initial_state, character, [final_state]])
         
