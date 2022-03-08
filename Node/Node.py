@@ -9,5 +9,4 @@ class Node(object):
         self.index_end = index_end
         
     def __str__(self):
-        return self.value
-        
+        return self.valuexs

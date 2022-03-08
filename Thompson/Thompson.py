@@ -1,4 +1,3 @@
-from turtle import done
 from NFA.NFA import NFA
 from State.State import State
 from Node.Node import Node
@@ -44,16 +43,14 @@ class Thompson(object):
                 )
             index+=1
         return nodes
-                
-    def generate_NFA(self):
-        #This fucntion return an NFA based on the regular
-        #expression provided 
-        nodes = self.__get_inital_nodes()
+        
+    def __process_NFA(self,nodes):
         while(len(nodes)!=1 or nodes[0].value != self.regex):
             #Parenthesis is first on hierarchy
             #If the value of the current node its enclosed by parenthesis.
             new_nodes = []
             index = 0
+            change_was_made = False
             while(index<len(nodes)):
                 node = nodes[index]
                 if(self.regex[node.index_start - 1: node.index_end + 1] == "(" + node.value + ")"):
@@ -63,34 +60,42 @@ class Thompson(object):
                         node.index_start - 1,
                         node.index_end + 1
                     ))
+                    change_was_made = True
                     index += 1
                 else:
                     new_nodes.append(node)
                     index += 1
             nodes = new_nodes
+            if(change_was_made):
+                nodes = self.__process_NFA(nodes)
                     
             #Positive clousure is a Kleene Clousure with a concatenation a+ = a*a
             new_nodes = []
             index = 0
+            change_was_made = False
             while(index<len(nodes)):
                 node = nodes[index]
                 if(self.regex[node.index_start: node.index_end + 1] == node.value + "+"):
                     new_nodes.append(Node(
                         self.regex[node.index_start: node.index_end + 1],
-                        self.__Concatenate(node.nfa, self.__Kleene(node.nfa)),
+                        self.__Positive_Clousure(node.nfa),
                         node.index_start,
                         node.index_end + 1
                     ))
+                    change_was_made = True
                     index += 1
                 else:
                     new_nodes.append(node)
                     index += 1
-            nodes = new_nodes      
+            nodes = new_nodes   
+            if(change_was_made):
+                nodes = self.__process_NFA(nodes)   
             
             #Kleene is second on hierarchy
             #If the value of the current node its previous to a Kleene sign.
             new_nodes = []
             index = 0
+            change_was_made = False
             while(index<len(nodes)):
                 node = nodes[index]
                 if(self.regex[node.index_start: node.index_end + 1] == node.value + "*"):
@@ -100,16 +105,20 @@ class Thompson(object):
                         node.index_start,
                         node.index_end + 1
                     ))
+                    change_was_made = True
                     index += 1
                 else:
                     new_nodes.append(node)
                     index += 1
             nodes = new_nodes
+            if(change_was_made):
+                nodes = self.__process_NFA(nodes)
                     
             #Concatenation is third on hierarchy
             #If the value of a node and its followed node are next to the other
             new_nodes = []
             index = 0
+            change_was_made = False
             while(index<len(nodes)):
                 node = nodes[index]
                 if(
@@ -122,43 +131,20 @@ class Thompson(object):
                         node.index_start,
                         nodes[index+1].index_end
                     ))
+                    change_was_made = True
                     index += 2
                 else:
                     new_nodes.append(node)
                     index += 1
             nodes = new_nodes
-            
-            #Nullable ?
-            #If the value has nullable following value|ε
-            new_nodes = []
-            index = 0
-            while(index<len(nodes)):
-                node = nodes[index]
-                if(self.regex[node.index_start: node.index_end + 1] == node.value + "?"):
-                    initial = State()
-                    final = State()
-                    new_nodes.append(Node(
-                        self.regex[node.index_start: node.index_end + 1],
-                        self.__OR(node.nfa, NFA(
-                            [initial, final],
-                            initial,
-                            [final],
-                            ['ε'],
-                            Transitions([initial, 'ε', [final]])
-                        )),
-                        node.index_start,
-                        node.index_end + 1
-                    ))
-                    index += 1
-                else:
-                    new_nodes.append(node)
-                    index += 1
-            nodes = new_nodes
+            if(change_was_made):
+                nodes = self.__process_NFA(nodes)
                     
             #Or is last on hierarchy
             #If the value of a node and its followed node are divided by a OR sign: |
             new_nodes = []
             index = 0
+            change_was_made = False
             while(index<len(nodes)):
                 node = nodes[index]
                 if(
@@ -170,13 +156,85 @@ class Thompson(object):
                         self.__OR(node.nfa, nodes[index+1].nfa),
                         node.index_start,
                         nodes[index+1].index_end
-                    )) 
+                    ))
+                    change_was_made = True 
                     index += 2
                 else:
                     new_nodes.append(node)
                     index += 1
             nodes = new_nodes
-        return nodes[0].nfa            
+            if(change_was_made):
+                nodes =  self.__process_NFA(nodes)
+            
+            #Nullable ?
+            #If the value has nullable following value|ε
+            new_nodes = []
+            index = 0
+            change_was_made = False
+            while(index<len(nodes)):
+                node = nodes[index]
+                if(self.regex[node.index_start: node.index_end + 1] == node.value + "?"):
+                    new_nodes.append(Node(
+                        self.regex[node.index_start: node.index_end + 1],
+                        self.__Nuballe(node.nfa),
+                        node.index_start,
+                        node.index_end + 1
+                    ))
+                    change_was_made = True
+                    index += 1
+                else:
+                    new_nodes.append(node)
+                    index += 1
+            nodes = new_nodes
+            if(change_was_made):
+                nodes =  self.__process_NFA(nodes)
+        return nodes       
+    
+    def generate_NFA(self):
+        #This fucntion return an NFA based on the regular
+        #expression provided 
+        nodes = self.__get_inital_nodes()
+        nodes = self.__process_NFA(nodes)
+        return nodes[0].nfa
+        
+    def __Nuballe(self, a):
+        initial = State()
+        final = State()
+        transitions = a.transitions
+        transitions.add_transition(initial, 'ε', a.initial)
+        transitions.add_transition(initial, 'ε', final)
+        for state in a.finals:
+            transitions.add_transition(state, 'ε', final)
+        return NFA(
+            a.states + [initial, final],
+            initial, 
+            [final],
+            a.alphabet,
+            transitions
+        )
+    
+    def __Positive_Clousure(self, a):
+        n = a
+        b = n.duplicate()
+        final=State()
+        intermidate=State()
+        transitions = a.transitions
+        transitions.combine(b.transitions)
+        for state in a.finals:
+            transitions.add_transition(state, 'ε', intermidate)
+        transitions.add_transition(intermidate, 'ε', b.initial)
+        transitions.add_transition(intermidate, 'ε', final)
+        for state in b.finals:
+            transitions.add_transition(state, 'ε', b.initial)
+            transitions.add_transition(state, 'ε', final)
+        return NFA(
+            a.states + [final, intermidate],
+            a.initial,
+            [final],
+            a.alphabet,
+            transitions
+        )
+         
             
     def __OR(self, a, b):
         #This returns a new NFA equivalent to a|b where a and b are both NFAs

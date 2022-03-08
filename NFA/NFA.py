@@ -1,5 +1,5 @@
 #A Nondeterministic finite automaton
-from sympy import true
+import copy
 from State.State import State
 from Transitions.Transitions import Transitions
 from utils.clousure import clousure
@@ -33,13 +33,6 @@ class NFA(object):
         self.finals = finals
         self.states = states
         self.transitions = transitions
-        
-    def __is_current_a_final(self):
-        #bool function, return true if the current state is a final state
-        for state in self.current:
-            if state in self.finals:
-                return True
-        return False
     
     def __make_trasition(self, S, character):
         #bool function, character must be a string memember of alphabet
@@ -61,6 +54,33 @@ class NFA(object):
             if(state in self.finals):
                 return True
         return False
+    
+    def duplicate(self):
+        newStates = [State() for _ in self.states]
+        index = 0
+        initial = None
+        finals = [] 
+        for state in self.states:
+            if(state == self.initial):
+                initial = newStates[index]
+            if(state in self.finals):
+                finals.append(newStates[index])
+            index += 1
+        transitions = Transitions()
+        for transition in self.transitions.transitions:
+            for n in transition[2]:
+                transitions.add_transition(
+                    newStates[self.states.index(transition[0])],
+                    transition[1],
+                    newStates[self.states.index(n)]
+            )
+        return NFA(
+            newStates,
+            initial,
+            finals,
+            self.alphabet,
+            transitions
+        )
                             
             
     
