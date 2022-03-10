@@ -1,5 +1,4 @@
 #A Nondeterministic finite automaton
-import copy
 from State.State import State
 from Transitions.Transitions import Transitions
 from utils.clousure import clousure

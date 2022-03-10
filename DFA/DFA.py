@@ -32,13 +32,6 @@ class DFA(object):
         self.finals = finals
         self.states = states
         self.transitions = transitions
-        
-    def __is_current_a_final(self):
-        #bool function, return true if the current state is a final state
-        for state in self.current:
-            if state in self.finals:
-                return True
-        return False
     
     def simulate(self, string):
         S = self.initial
