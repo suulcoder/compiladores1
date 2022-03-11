@@ -57,8 +57,11 @@ class Leaf(object):
             self.firstpos = self.right.firstpos + self.left.firstpos
         elif(self.value=='•'):
             self.firstpos =  self.right.firstpos + self.left.firstpos if self.left.nullable == True else self.left.firstpos
-        else:
+        elif(isinstance(self.id, int)):
             self.firstpos = [self]
+        for n in self.firstpos:
+            if(not isinstance(n.id, int)):
+                self.firstpos.remove(n)
     
     def getLastPos(self):
         if(self.right==None and self.left==None):
@@ -70,9 +73,12 @@ class Leaf(object):
         elif(self.value=='|'):
             self.lastpos = self.right.lastpos + self.left.lastpos
         elif(self.value=='•'):
-            self.lastpos =  self.right.lastpos + self.left.lastpos if self.right.lastpos == True else self.right.lastpos
-        else:
+            self.lastpos =  self.right.lastpos + self.left.lastpos if self.right.nullable == True else self.right.lastpos
+        elif(isinstance(self.id, int)):
             self.lastpos = [self]
+        for n in self.lastpos:
+            if(not isinstance(n.id, int)):
+                self.firstpos.remove(n)
     
     def getFollowPos(self):
         if(self.value=='*'):

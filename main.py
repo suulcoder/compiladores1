@@ -8,6 +8,7 @@
 #  - Thompson Algorythm 
 #  - Sub
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+from sympy import print_tree
 from Thompson.Thompson import Thompson
 from NFA.NFA import NFA
 import sys, getopt
@@ -15,6 +16,7 @@ import sys, getopt
 from SubsetConstructionAlgorythm.SubsetConstructionAlgorythm import SubsetConstructionAlgorythm
 from Direct.Direct import DirectToDFA
 from utils.tree import generate_Tree
+from utils.graph import graph
 
 def generate_NFA(regex):
     return Thompson(regex).generate_NFA()
@@ -44,7 +46,7 @@ def parse_regex(regex):
     while('+' in regex):
         print(regex)
         index = regex.index('+')
-        if(index>1):
+        if(index>0):
             if(regex[index-1]!=')'):
                 regex = regex[:index] + '(' + regex[index-1] + ")*" + regex[index+1:]
             else:
@@ -58,6 +60,15 @@ def parse_regex(regex):
             raise SyntaxError
     return regex
 
+def print_TREE(root, level=0):
+    print(root.id, level)
+    if(root.left):
+        print("===LEFT")
+        print_TREE(root.left, level+1)
+    if(root.right):
+        print("===right")
+        print_TREE(root.right, level+1)
+
 if __name__ == "__main__":
     regex, string = main(sys.argv[1:])  #Read regex and string
     regex = parse_regex(regex)
@@ -69,45 +80,33 @@ if __name__ == "__main__":
     
     nfa = generate_NFA(regex)
     
-    print("----------------NFA-------------------")
-    for transition in nfa.transitions.transitions:
-        print(transition[0].id, transition[1])
-        for state in transition[2]:
-            print(state.id)
+    print("----------------NFA-------------------\n\n")
+    graph(nfa, "nfa_graph")
     
-    print("-------Simulating... with NFA-------")
     if(nfa.simulate(string)):
-        print("Pertenece al lenguje")
+        print("Pertenece al lenguje\n")
     else:
-        print("No pertenece")
+        print("No pertenece\n")
         
     subsetConstructionAlgorythm = SubsetConstructionAlgorythm(nfa)
     dfa = subsetConstructionAlgorythm.getDFA()
     
-    print("----------------DFA-------------------")
-    for transition in dfa.transitions.transitions:
-        print(transition[0].id, transition[1])
-        for state in transition[2]:
-            print(state.id)
+    print("----------------DFA-------------------\n\n")
+    graph(dfa, "dfa_graph")
     
-    print("-------Simulating... with DFA-------")
     if(dfa.simulate(string)):
-        print("Pertenece al lenguje")
+        print("Pertenece al lenguje\n")
     else:
-        print("No pertenece")
+        print("No pertenece\n")
     
     
     root, alphabet = generate_Tree(regex)
     dfa = DirectToDFA(root, alphabet)
     
-    print("--------------Direct-------------------")
-    for transition in dfa.transitions.transitions:
-        print(transition[0].id, transition[1])
-        for state in transition[2]:
-            print(state.id)
+    print("--------------Direct-------------------\n\n")
+    graph(dfa, "direct_graph")
     
-    print("-----Simulating... with DIRECT-----")
     if(dfa.simulate(string)):
-        print("Pertenece al lenguje")
+        print("Pertenece al lenguje\n")
     else:
-        print("No pertenece")
+        print("No pertenece\n")

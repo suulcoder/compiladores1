@@ -16,7 +16,9 @@ def get_aumented_regex(regular_expression):
                     regular_expression[index+2] != "*" and
                     regular_expression[index+2] != "?" and
                     regular_expression[index+2] != "+" and
-                    regular_expression[index+1] != "|"):
+                    regular_expression[index+2] != "|" and 
+                    regular_expression[index+2] != ")"
+                ):
                         regex += char + regular_expression[index+1] + "•"
                         index+=2
                 else:
@@ -36,16 +38,17 @@ def get_aumented_regex(regular_expression):
                 regex += char
                 index += 1
             elif(regular_expression[index+1] and
-                char != "(" ):
+                char != "("  and 
+                char != "|" ):
                 regex += char + "•"
                 index += 1
             else:
                 regex += char
                 index += 1
         else:
-            regex += char + "#"
+            regex += char
             index += 1
-    return(regex)
+    return(regex + "•" + "#")
 
 def get_aphabet(regex):
     alphabet = []
@@ -81,7 +84,7 @@ def generate_Tree(regex):
                 operator = stack.pop()
                 right = values.pop()
                 left = None
-                if(len(values)!=0):
+                if(len(values)!=0 and operator!="*"):
                     left = values.pop()
                 parent = Leaf(operator, right, left, id=operator)
                 values.append(parent)
@@ -93,7 +96,7 @@ def generate_Tree(regex):
                 operator = stack.pop()
                 right = values.pop()
                 left = None
-                if(len(values)!=0):
+                if(len(values)!=0 and operator!="*"):
                     left = values.pop()
                 parent = Leaf(operator, right, left, id=operator)
                 values.append(parent)
@@ -115,4 +118,3 @@ def generate_Tree(regex):
         parent = Leaf("•", right, left, id="•")
         values.append(parent)
     return values[0], alphabet
-            
