@@ -74,7 +74,7 @@ def generate_Tree(regex):
     values = []
     stack = []
     for char in regex:
-        if(char in alphabet):
+        if(char in alphabet + ['ε']):
             values.append(Leaf(char))
         elif char == '(':
             stack.append(char)

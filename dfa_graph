@@ -1,15 +1,14 @@
 digraph {
-	node [shape=circle]
+	node [shape=doublecircle]
 	12
 	node [shape=circle]
-	13
-	node [shape=doublecircle]
-	15
+	14
 	node [shape=none]
 	""
 	"" -> 12
-	12 -> 13 [label=a]
-	13 -> 15 [label=a]
-	13 -> 13 [label=b]
-	15 -> 15 [label=b]
+	12 -> 12 [label=b]
+	12 -> 14 [label=a]
+	12 -> 12 [label="ε"]
+	14 -> 12 [label=b]
+	14 -> 14 [label="ε"]
 }

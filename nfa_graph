@@ -4,13 +4,13 @@ digraph {
 	node [shape=circle]
 	1
 	node [shape=circle]
-	2
-	node [shape=circle]
-	3
-	node [shape=circle]
 	8
 	node [shape=circle]
 	9
+	node [shape=circle]
+	2
+	node [shape=circle]
+	3
 	node [shape=circle]
 	4
 	node [shape=circle]
@@ -25,20 +25,19 @@ digraph {
 	11
 	node [shape=none]
 	""
-	"" -> 0
-	0 -> 1 [label=a]
-	2 -> 3 [label=b]
-	8 -> 2 [label="ε"]
+	"" -> 10
+	0 -> 1 [label=b]
+	8 -> 0 [label="ε"]
 	8 -> 9 [label="ε"]
-	3 -> 2 [label="ε"]
-	3 -> 9 [label="ε"]
-	1 -> 8 [label="ε"]
-	4 -> 5 [label=a]
-	6 -> 7 [label=b]
+	1 -> 0 [label="ε"]
+	1 -> 9 [label="ε"]
+	2 -> 3 [label=a]
+	9 -> 2 [label="ε"]
+	4 -> 5 [label=b]
+	3 -> 4 [label="ε"]
+	6 -> 7 [label="ε"]
+	10 -> 8 [label="ε"]
 	10 -> 6 [label="ε"]
-	10 -> 11 [label="ε"]
-	7 -> 6 [label="ε"]
+	5 -> 11 [label="ε"]
 	7 -> 11 [label="ε"]
-	5 -> 10 [label="ε"]
-	9 -> 4 [label="ε"]
 }

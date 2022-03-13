@@ -13,14 +13,14 @@ def DirectToDFA(root, alphabet):
     transitions = Transitions()
     initial = State(sorted(root.firstpos, key=lambda x: x.id)) 
     states = [initial]
-    final = None
+    final = []
     is_done, state = isDone(states)
     while (is_done):
         state.mark()
         _transitions = {}
         for node in state.clousure:
             if(node.value == "#"):
-                final = [state]
+                final += [state]
                 break
             if(node.value in _transitions):
                 _transitions[node.value].extend(x for x in node.followpos if x not in _transitions[node.value])
