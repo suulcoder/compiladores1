@@ -1,6 +1,6 @@
 from Leaf.Leaf import Leaf
 
-precedences = {'*' : 2, '+' : 2, "•" : 1, "|" : 1, "?": 0}
+precedences = {'*' : 3, '+' : 3, "•" : 2, "|" : 1, "?": 3}
 
 def get_aumented_regex(regular_expression):
     regex = ''
@@ -8,7 +8,17 @@ def get_aumented_regex(regular_expression):
     while (index!=len(regular_expression)):
         char = regular_expression[index]
         if(index==0):
-            regex += char
+            if(
+                regular_expression[index+1] != "*" and
+                regular_expression[index+1] != "?" and
+                regular_expression[index+1] != "+" and
+                regular_expression[index+1] != "|" and 
+                regular_expression[index+1] != ")" and
+                regular_expression[index] != "("
+                ):
+                regex += char + "•"
+            else:
+                regex += char
             index += 1
         elif(index+1<len(regular_expression)):
             if(index+2<len(regular_expression) and regular_expression[index+1] == "*"):
@@ -48,7 +58,7 @@ def get_aumented_regex(regular_expression):
         else:
             regex += char
             index += 1
-    return(regex + "•" + "#")
+    return("(" + regex + ")•" + "#")
 
 def get_aphabet(regex):
     alphabet = []
@@ -70,11 +80,12 @@ def greater_precedence(operator_1, operator_2):
 
 def generate_Tree(regex):
     regex = get_aumented_regex(regex)
+    print(regex)
     alphabet = get_aphabet(regex)
     values = []
     stack = []
     for char in regex:
-        if(char in alphabet + ['ε']):
+        if(char in alphabet):
             values.append(Leaf(char))
         elif char == '(':
             stack.append(char)

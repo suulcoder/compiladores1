@@ -1,14 +1,19 @@
 digraph {
-	node [shape=doublecircle]
-	12
 	node [shape=circle]
-	14
+	22
+	node [shape=circle]
+	25
+	node [shape=circle]
+	30
+	node [shape=doublecircle]
+	35
 	node [shape=none]
 	""
-	"" -> 12
-	12 -> 12 [label=b]
-	12 -> 14 [label=a]
-	12 -> 12 [label="ε"]
-	14 -> 12 [label=b]
-	14 -> 14 [label="ε"]
+	"" -> 22
+	22 -> 22 [label=b]
+	22 -> 25 [label=a]
+	25 -> 30 [label=b]
+	30 -> 35 [label=b]
+	35 -> 35 [label=b]
+	35 -> 35 [label=a]
 }

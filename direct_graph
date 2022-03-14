@@ -1,17 +1,26 @@
 digraph {
 	node [shape=circle]
-	20
+	47
 	node [shape=circle]
-	21
+	48
 	node [shape=circle]
-	22
+	49
+	node [shape=circle]
+	50
+	node [shape=circle]
+	51
 	node [shape=doublecircle]
-	23
+	52
 	node [shape=none]
 	""
-	"" -> 20
-	20 -> 20 [label=b]
-	20 -> 21 [label=a]
-	21 -> 22 [label=b]
-	21 -> 23 [label="ε"]
+	"" -> 47
+	47 -> 48 [label=b]
+	48 -> 48 [label=b]
+	48 -> 49 [label=a]
+	49 -> 50 [label=b]
+	50 -> 51 [label=b]
+	51 -> 52 [label=a]
+	51 -> 52 [label=b]
+	52 -> 52 [label=a]
+	52 -> 52 [label=b]
 }

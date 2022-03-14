@@ -37,7 +37,7 @@ class Leaf(object):
         self.getFollowPos()
         
     def getNullable(self):
-        if(self.value=='*'):
+        if(self.value=='*' and self.value=='ε'):
             self.nullable = True
         elif(self.value=='|'):
             self.nullable = self.right.nullable or self.left.nullable
@@ -47,7 +47,9 @@ class Leaf(object):
             self.nullable = False
     
     def getFirstPos(self):
-        if(self.value=='*'):
+        if(self.value == 'ε'):
+            self.firstpos = []
+        elif(self.value=='*'):
             self.firstpos = self.right.firstpos 
         elif(self.right==None or self.left==None):
             self.firstpos = [self]
@@ -62,7 +64,9 @@ class Leaf(object):
                 self.firstpos.remove(n)
     
     def getLastPos(self):
-        if(self.right==None and self.left==None):
+        if(self.value == 'ε'):
+            self.lastpos = []
+        elif(self.right==None and self.left==None):
             self.lastpos = [self]
         elif(self.value=='*'):
             self.lastpos = self.right.lastpos
