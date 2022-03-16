@@ -8,10 +8,10 @@
 #  - Thompson Algorythm 
 #  - Sub
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-from sympy import print_tree
 from Thompson.Thompson import Thompson
 from NFA.NFA import NFA
 import sys, getopt
+import time
 
 from SubsetConstructionAlgorythm.SubsetConstructionAlgorythm import SubsetConstructionAlgorythm
 from Direct.Direct import DirectToDFA
@@ -76,37 +76,40 @@ if __name__ == "__main__":
     
     print("--------------Regex-------------------")
     print(regex)
-            
-    
-    nfa = generate_NFA(regex)
-    
+        
     print("----------------NFA-------------------\n\n")
+    start_time = time.time()
+    nfa = generate_NFA(regex)
     graph(nfa, "nfa_graph")
     
     if(nfa.simulate(string)):
         print("Pertenece al lenguje\n")
     else:
         print("No pertenece\n")
-        
-    subsetConstructionAlgorythm = SubsetConstructionAlgorythm(nfa)
-    dfa = subsetConstructionAlgorythm.getDFA()
+    print("---Se llevó %s segundos ---" % (time.time() - start_time))
     
     print("----------------DFA-------------------\n\n")
+    start_time = time.time()
+    subsetConstructionAlgorythm = SubsetConstructionAlgorythm(nfa)
+    dfa = subsetConstructionAlgorythm.getDFA()
     graph(dfa, "dfa_graph")
     
     if(dfa.simulate(string)):
         print("Pertenece al lenguje\n")
     else:
         print("No pertenece\n")
+    print("---Se llevó %s segundos ---" % (time.time() - start_time))
     
-    
-    root, alphabet = generate_Tree(regex)
-    dfa = DirectToDFA(root, alphabet)
     
     print("--------------Direct-------------------\n\n")
+    start_time = time.time()
+    root, alphabet = generate_Tree(regex)
+    dfa = DirectToDFA(root, alphabet)
     graph(dfa, "direct_graph")
     
     if(dfa.simulate(string)):
         print("Pertenece al lenguje\n")
     else:
         print("No pertenece\n")
+    
+    print("---Se llevó %s segundos ---" % (time.time() - start_time))
